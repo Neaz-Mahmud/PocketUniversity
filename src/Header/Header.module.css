@@ -1,0 +1,129 @@
+.header {
+  height: 76px;
+  background: var(--panel);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 20px;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.title {
+  margin: 0;
+  font-size: 22px;
+  font-weight: 800;
+  letter-spacing: -0.6px;
+}
+
+.subTitle {
+  margin: 2px 0 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.themeBtn {
+  border: none;
+  background: var(--soft);
+  color: var(--text);
+  height: 42px;
+  padding: 0 14px;
+  border-radius: 14px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.themeBtn:hover {
+  background: var(--hover);
+  transform: translateY(-1px);
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  background: linear-gradient(135deg, var(--brand1), var(--brand2));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  box-shadow: 0 10px 24px rgba(91, 108, 255, 0.25);
+}
+
+.menuBtn {
+  width: 46px;
+  height: 46px;
+  border: none;
+  border-radius: 16px;
+  background: var(--soft);
+  display: none;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 0 12px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.menuBtn:hover {
+  background: var(--hover);
+  transform: translateY(-1px);
+}
+
+.menuBtn span {
+  width: 100%;
+  height: 2px;
+  background: var(--text);
+  border-radius: 999px;
+  display: block;
+}
+
+@media (max-width: 768px) {
+  .header {
+    padding: 0 14px;
+  }
+
+  .menuBtn {
+    display: flex;
+  }
+
+  .title {
+    font-size: 18px;
+  }
+
+  .subTitle {
+    font-size: 11px;
+  }
+
+  .avatar {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+  }
+
+  .themeBtn {
+    height: 38px;
+    padding: 0 12px;
+    border-radius: 12px;
+  }
+}
