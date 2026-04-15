@@ -13,6 +13,8 @@ export default function Sidebar({ isOpen, closeSidebar }) {
       ></div>
 
       <aside className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
+
+        {/*Mobile Header*/}
         <div className={styles.mobileHeader}>
           <div className={styles.logo}>
             <div className={styles.logoBox}>P</div>
@@ -27,6 +29,8 @@ export default function Sidebar({ isOpen, closeSidebar }) {
           </button>
         </div>
 
+
+        {/*Desktop Header*/}
         <div className={styles.desktopLogo}>
           <div className={styles.logo}>
             <div className={styles.logoBox}>P</div>
@@ -39,37 +43,47 @@ export default function Sidebar({ isOpen, closeSidebar }) {
 
         <div className={styles.divider}></div>
 
-        {/* Home */}
+        {/* Central Segment */}
         <div className={styles.item}>
           <div className={styles.mainItem}>
             <div className={styles.left}>
               <span className={styles.icon}></span>
-              <span className={styles.menuText}>Home</span>
+              <span className={styles.menuText}>Central Segment</span>
             </div>
           </div>
 
           <div className={styles.subMenu}>
-            <p>Overview</p>
-            <p>Courses</p>
+            <p>Book Sharing</p>
+            <p>Visualzer tools</p>
+            <p>Job Queries</p>
+            <p>Best Material</p>
           </div>
         </div>
 
-        {/* Dashboard */}
+        {/* Personal Segment */}
         <div className={styles.item}>
           <div className={styles.mainItem}>
             <div className={styles.left}>
               <span className={styles.icon}></span>
-              <span className={styles.menuText}>Dashboard</span>
+              <span className={styles.menuText}>Personal Segment</span>
             </div>
           </div>
 
-          <div className={styles.subMenu}>
-            <p>Analytics</p>
-            <p>Progress</p>
-          </div>
         </div>
 
-        {/* Orders */}
+
+        {/* Cr Segment */}
+        <div className={styles.item}>
+          <div className={styles.mainItem}>
+            <div className={styles.left}>
+              <span className={styles.icon}></span>
+              <span className={styles.menuText}>Cr Segment</span>
+            </div>
+          </div>
+
+        </div>
+
+        {/* Notice */}
         <div className={styles.item}>
           <button
             className={styles.mainButton}
@@ -77,7 +91,7 @@ export default function Sidebar({ isOpen, closeSidebar }) {
           >
             <div className={styles.left}>
               <span className={styles.icon}></span>
-              <span className={styles.menuText}>Orders</span>
+              <span className={styles.menuText}>Notice</span>
             </div>
 
             <span
@@ -92,9 +106,9 @@ export default function Sidebar({ isOpen, closeSidebar }) {
           >
             <div className={styles.collapseInner}>
               <div className={styles.subMenu}>
-                <p>All Orders</p>
-                <p>Pending</p>
-                <p>Completed</p>
+                <p>All Notice</p>
+                <p>Working Calender</p>
+
               </div>
             </div>
           </div>
