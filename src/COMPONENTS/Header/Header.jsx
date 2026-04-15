@@ -12,7 +12,7 @@ export default function Header({ darkMode, toggleDarkMode, toggleSidebar }) {
 
         <div>
           <h1 className={styles.title}>Pocket University</h1>
-          <p className={styles.subTitle}>Education Dashboard</p>
+          <p className={styles.subTitle}>CR Dashboard</p>
         </div>
       </div>
 

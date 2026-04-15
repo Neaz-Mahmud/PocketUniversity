@@ -1,5 +1,6 @@
 import { useState } from "react";
 import styles from "./Sidebar.module.css";
+import { Link } from "react-router";
 
 export default function Sidebar({ isOpen, closeSidebar }) {
   const [ordersOpen, setOrdersOpen] = useState(false);
@@ -65,7 +66,9 @@ export default function Sidebar({ isOpen, closeSidebar }) {
           <div className={styles.mainItem}>
             <div className={styles.left}>
               <span className={styles.icon}></span>
-              <span className={styles.menuText}>Personal Segment</span>
+              <Link className="LINKUSED" to="/Personal"> <span className={styles.menuText} >Personal Segment</span></Link>
+
+
             </div>
           </div>
 

@@ -10,7 +10,8 @@ body,
   min-height: 100%;
 }
 
-
-
-
-
+.LINKUSED {
+  font-family: "Plus Jakarta Sans", sans-serif;
+  color: var(--text);
+  text-decoration: none;
+}

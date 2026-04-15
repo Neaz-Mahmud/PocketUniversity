@@ -4,6 +4,7 @@ import styles from './App.module.css'
 import Header from './COMPONENTS/Header/Header';
 import Sidebar from './COMPONENTS/Sidebar/Sidebar';
 import Body from './COMPONENTS/mainbody/body';
+import { Outlet } from 'react-router';
 function App() {
 
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -25,7 +26,7 @@ function App() {
           closeSidebar={() => setSidebarOpen(false)}
         />
 
-        <Body></Body>
+        <Outlet></Outlet>
       </div>
     </div>
   );
