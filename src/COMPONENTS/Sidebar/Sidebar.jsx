@@ -14,7 +14,6 @@ export default function Sidebar({ isOpen, closeSidebar }) {
       ></div>
 
       <aside className={`${styles.sidebar} ${isOpen ? styles.open : ""}`}>
-
         {/*Mobile Header*/}
         <div className={styles.mobileHeader}>
           <div className={styles.logo}>
@@ -29,7 +28,6 @@ export default function Sidebar({ isOpen, closeSidebar }) {
             ×
           </button>
         </div>
-
 
         {/*Desktop Header*/}
         <div className={styles.desktopLogo}>
@@ -66,24 +64,25 @@ export default function Sidebar({ isOpen, closeSidebar }) {
           <div className={styles.mainItem}>
             <div className={styles.left}>
               <span className={styles.icon}></span>
-              <Link className="LINKUSED" to="/Personal"> <span className={styles.menuText} >Personal Segment</span></Link>
-
-
+              <Link className="LINKUSED" to="/Personal">
+                {" "}
+                <span className={styles.menuText}>Personal Segment</span>
+              </Link>
             </div>
           </div>
-
         </div>
-
 
         {/* Cr Segment */}
         <div className={styles.item}>
           <div className={styles.mainItem}>
             <div className={styles.left}>
               <span className={styles.icon}></span>
-              <span className={styles.menuText}>Cr Segment</span>
+              <Link className="LINKUSED" to={"/crsegment"}>
+                {" "}
+                <span className={styles.menuText}>Cr Segment</span>
+              </Link>
             </div>
           </div>
-
         </div>
 
         {/* Notice */}
@@ -109,9 +108,19 @@ export default function Sidebar({ isOpen, closeSidebar }) {
           >
             <div className={styles.collapseInner}>
               <div className={styles.subMenu}>
-                <p>All Notice</p>
-                <p>Working Calender</p>
+                <Link className="LINKUSED" to="/postnotice">
+                  {" "}
+                  <p>Post Notice</p>
+                </Link>
+                <Link className="LINKUSED" to="/allnotice">
+                  {" "}
+                  <p>All Notice</p>
+                </Link>
 
+                <Link className="LINKUSED" to="/workingcalender">
+                  {" "}
+                  <p>Working Calender</p>
+                </Link>
               </div>
             </div>
           </div>
