@@ -14,6 +14,8 @@ import AllNotice from "./COMPONENTS/mainbody/Notice/AllNotice/AllNotice.jsx";
 
 import WorkCalendar from "./COMPONENTS/mainbody/Notice/WorkCalender/WorkCalendar.jsx";
 import NoticeBoardPage from "./COMPONENTS/mainbody/Notice/NoticeBoardPage/NoticeBoardPage.jsx";
+import UniversityList from "./COMPONENTS/mainbody/central segment/Best Material/UniversityList.jsx";
+import JobQueries from "./COMPONENTS/mainbody/central segment/Job Queries/JobQueries.jsx";
 
 const route = createBrowserRouter([
   {
@@ -44,6 +46,14 @@ const route = createBrowserRouter([
       {
         path: "workingcalender",
         element: <NoticeBoardPage />,
+      },
+      {
+        path: "bestmaterial",
+        element: <UniversityList />,
+      },
+      {
+        path: "jobqueries",
+        element: <JobQueries />,
       },
     ],
   },

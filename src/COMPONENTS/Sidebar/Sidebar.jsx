@@ -54,8 +54,16 @@ export default function Sidebar({ isOpen, closeSidebar }) {
           <div className={styles.subMenu}>
             <p>Book Sharing</p>
             <p>Visualzer tools</p>
-            <p>Job Queries</p>
-            <p>Best Material</p>
+
+            <Link className="LINKUSED" to="/jobqueries">
+              {" "}
+              <p>Job Queries</p>
+            </Link>
+
+            <Link className="LINKUSED" to="/bestmaterial">
+              {" "}
+              <p>Best Material</p>
+            </Link>
           </div>
         </div>
 
