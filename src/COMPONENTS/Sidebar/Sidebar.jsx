@@ -53,7 +53,11 @@ export default function Sidebar({ isOpen, closeSidebar }) {
 
           <div className={styles.subMenu}>
             <p>Book Sharing</p>
-            <p>Visualzer tools</p>
+
+            <Link className="LINKUSED" to="/visualizertools">
+              {" "}
+              <p>Visualzer tools</p>
+            </Link>
 
             <Link className="LINKUSED" to="/jobqueries">
               {" "}

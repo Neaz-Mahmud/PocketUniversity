@@ -16,6 +16,9 @@ import WorkCalendar from "./COMPONENTS/mainbody/Notice/WorkCalender/WorkCalendar
 import NoticeBoardPage from "./COMPONENTS/mainbody/Notice/NoticeBoardPage/NoticeBoardPage.jsx";
 import UniversityList from "./COMPONENTS/mainbody/central segment/Best Material/UniversityList.jsx";
 import JobQueries from "./COMPONENTS/mainbody/central segment/Job Queries/JobQueries.jsx";
+import CourseList from "./COMPONENTS/mainbody/central segment/Visualizer Tools/CourseList.jsx";
+import TopicList from "./COMPONENTS/mainbody/central segment/Visualizer Tools/Topics List/TopicList.jsx";
+import SingleTopics from "./COMPONENTS/mainbody/central segment/Visualizer Tools/Each Single Topics/SingleTopics.jsx";
 
 const route = createBrowserRouter([
   {
@@ -54,6 +57,20 @@ const route = createBrowserRouter([
       {
         path: "jobqueries",
         element: <JobQueries />,
+      },
+      {
+        path: "visualizertools",
+        element: <CourseList />,
+      },
+      {
+        path: `visualizertools/:courseSlug`,
+
+        element: <TopicList />,
+      },
+      {
+        path: `visualizertools/:courseSlug/:topicsSlug`,
+
+        element: <SingleTopics />,
       },
     ],
   },

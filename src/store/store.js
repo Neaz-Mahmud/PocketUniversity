@@ -4,6 +4,7 @@ import AllteacherSlice from "./AllteacherSlice";
 import AllNoticeSlice from "./AllNoticeSlice";
 import AllUniversityNameSlice from "./AllUniversityNameSlice";
 import AllCompanyNameSlice from "./AllCompanyNameSlice";
+import CourseNameSlice from "./CourseNameSlice";
 
 export const store = configureStore({
   reducer: {
@@ -11,5 +12,6 @@ export const store = configureStore({
     AllteacherSlice: AllteacherSlice.reducer,
     AllUniversityNameSlice: AllUniversityNameSlice.reducer,
     AllCompanyNameSlice: AllCompanyNameSlice.reducer,
+    CourseNameSlice: CourseNameSlice.reducer,
   },
 });
