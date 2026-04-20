@@ -15,6 +15,10 @@ const AllNoticeSlice = createSlice({
     ],
   },
   reducers: {
+    pushNotices: (state, action) => {
+      console.log(action.payload);
+      state.notices.push(action.payload);
+    },
     setNotices: (state, action) => {
       state.notices = action.payload;
     },

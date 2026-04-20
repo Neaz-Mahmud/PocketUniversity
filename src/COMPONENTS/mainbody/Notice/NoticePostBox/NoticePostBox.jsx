@@ -2,15 +2,24 @@ import { useMemo, useState } from "react";
 import { Form, useNavigation } from "react-router-dom";
 import { useSelector } from "react-redux";
 import styles from "./NoticePostBox.module.css";
+import { store } from "../../../../store/store";
+import { AllNoticeSliceactions } from "../../../../store/AllNoticeSlice";
 
 /* 
   React Router action function
-
 */
+// eslint-disable-next-line react-refresh/only-export-components
 export async function action({ request }) {
   const formData = await request.formData();
+  const data = Object.fromEntries(formData);
 
-  const attachments = formData.getAll("attachments");
+  // Remove non-serializable File objects from Redux payload
+  delete data.attachments;
+
+  // Dispatch directly using the imported store, since hooks cannot be used here
+  store.dispatch(AllNoticeSliceactions.pushNotices(data));
+
+  return null;
 }
 
 export default function NoticePostBox() {
@@ -18,10 +27,7 @@ export default function NoticePostBox() {
   const isSubmitting = navigation.state === "submitting";
 
   // Adjust this selector if your redux state shape is slightly different
-  const teachers =
-    useSelector((state) => state.allteacher?.allteacher) ||
-    useSelector((state) => state.allteacher) ||
-    [];
+  const teachers = useSelector((state) => state.allteacher?.allteacher || state.allteacher || []);
 
   const [noticeType, setNoticeType] = useState("general");
   const [selectedTeacherId, setSelectedTeacherId] = useState("");

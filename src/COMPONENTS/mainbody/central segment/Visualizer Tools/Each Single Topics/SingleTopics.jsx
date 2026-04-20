@@ -2,6 +2,8 @@ import { useMemo } from "react";
 import { Link, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import styles from "./SingleTopics.module.css";
+import LinkedListBrief from "../Document/LinkedList/LinkedListBrief";
+import LinkedListVisualizer from "../AnimationComponent/LinkedList/LinkedListVisualizer";
 
 export default function SingleTopics() {
   const { courseSlug, topicsSlug } = useParams();
@@ -33,18 +35,10 @@ export default function SingleTopics() {
 
   const renderTopicContent = () => {
 
-
     return (
       <>
-        <div className={styles.card}>
-          <h3>{selectedTopic.name} Document</h3>
-          <p>Add document/article for this topic.</p>
-        </div>
-
-        <div className={styles.card}>
-          <h3>{selectedTopic.name} Visualizer</h3>
-          <p>Add visualizer for this topic.</p>
-        </div>
+        {selectedTopic.slug === "linked-lists" && <LinkedListBrief />}
+        {selectedTopic.slug === "linked-lists" && <LinkedListVisualizer />}
       </>
     );
   };

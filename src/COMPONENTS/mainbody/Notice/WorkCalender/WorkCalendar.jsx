@@ -20,11 +20,15 @@ const monthOptions = [
 export default function WorkCalendar() {
   const notices = useSelector((state) => state.AllNoticeSlice.notices || []);
 
-  const today = new Date();
-  const todayString = formatDate(
-    today.getFullYear(),
-    today.getMonth(),
-    today.getDate(),
+  const today = useMemo(() => new Date(), []);
+  const todayString = useMemo(
+    () =>
+      formatDate(
+        today.getFullYear(),
+        today.getMonth(),
+        today.getDate()
+      ),
+    [today]
   );
 
   const [currentMonth, setCurrentMonth] = useState(today.getMonth());

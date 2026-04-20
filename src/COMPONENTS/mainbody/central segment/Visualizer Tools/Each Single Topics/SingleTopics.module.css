@@ -51,9 +51,10 @@
 }
 
 .grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  width: 100%;
 }
 
 .card {
@@ -111,7 +112,7 @@
   }
 
   .grid {
-    grid-template-columns: 1fr;
+    gap: 16px;
   }
 
   .card {

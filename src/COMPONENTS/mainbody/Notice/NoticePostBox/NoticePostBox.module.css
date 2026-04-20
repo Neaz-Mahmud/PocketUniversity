@@ -130,11 +130,9 @@
   height: 42px;
   padding: 0 16px;
   border-radius: 14px;
-  background: linear-gradient(
-    135deg,
-    var(--brand1, #5b6cff),
-    var(--brand2, #7b61ff)
-  );
+  background: linear-gradient(135deg,
+      var(--brand1, #5b6cff),
+      var(--brand2, #7b61ff));
   color: white;
   font-size: 13px;
   font-weight: 700;
@@ -209,11 +207,9 @@
   height: 48px;
   padding: 0 18px;
   border-radius: 16px;
-  background: linear-gradient(
-    135deg,
-    var(--brand1, #5b6cff),
-    var(--brand2, #7b61ff)
-  );
+  background: linear-gradient(135deg,
+      var(--brand1, #5b6cff),
+      var(--brand2, #7b61ff));
   color: white;
   font-size: 14px;
   font-weight: 800;
