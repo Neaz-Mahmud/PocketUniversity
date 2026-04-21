@@ -188,10 +188,7 @@ export default function UniversityList() {
                   <span className={styles.metaTag}>{university.category}</span>
                 </div>
 
-                <p className={styles.info}>
-                  University details and curriculum materials can be added here
-                  later.
-                </p>
+                <p className={styles.info}>curriculum materials</p>
               </div>
             </article>
           ))}

@@ -163,7 +163,11 @@ export default function Sidebar({ isOpen, closeSidebar }) {
           >
             <div className={styles.collapseInner}>
               <div className={styles.subMenu}>
-                <p>Profile</p>
+                <Link className="LINKUSED" to="/profile">
+                  {" "}
+                  <p>Profile</p>
+                </Link>
+
                 <p>Settings</p>
                 <p>Logout</p>
               </div>

@@ -19,6 +19,7 @@ import JobQueries from "./COMPONENTS/mainbody/central segment/Job Queries/JobQue
 import CourseList from "./COMPONENTS/mainbody/central segment/Visualizer Tools/CourseList.jsx";
 import TopicList from "./COMPONENTS/mainbody/central segment/Visualizer Tools/Topics List/TopicList.jsx";
 import SingleTopics from "./COMPONENTS/mainbody/central segment/Visualizer Tools/Each Single Topics/SingleTopics.jsx";
+import ProfilePage from "./COMPONENTS/Account/ProfilePage.jsx";
 
 const route = createBrowserRouter([
   {
@@ -71,6 +72,13 @@ const route = createBrowserRouter([
         path: `visualizertools/:courseSlug/:topicsSlug`,
 
         element: <SingleTopics />,
+      },
+
+      /*Account Section */
+      {
+        path: `profile`,
+
+        element: <ProfilePage />,
       },
     ],
   },
