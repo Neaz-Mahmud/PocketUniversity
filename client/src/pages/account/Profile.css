@@ -1,0 +1,19 @@
+.avatar-upload-label { cursor: pointer; display: inline-flex; }
+
+/* The avatar tile and the "change photo" button act as one control,
+   so hovering either one lifts the picture. */
+.avatar-upload-row:hover .avatar-lg {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px -3px var(--brand-ring);
+}
+
+.avatar-lg { transition: transform var(--dur-base) var(--ease), box-shadow var(--dur-base) var(--ease); }
+
+.profile-form { max-width: 420px; }
+.profile-role-input { text-transform: capitalize; }
+.profile-save-btn { align-self: flex-start; margin-top: var(--space-2); }
+
+@media (max-width: 480px) {
+  .profile-form { max-width: 100%; }
+  .profile-save-btn { align-self: stretch; }
+}
