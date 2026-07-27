@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 import { Share2, Unlink } from 'lucide-react';
+import { identityStyle } from '../utils/identityColor';
 
 /**
  * Shown inside a section's course view (admin only). Lets the admin request
@@ -83,7 +84,7 @@ const MirrorRequestPanel = ({ sectionId, courseId, onLinked }) => {
 
       {link ? (
         <div className="request-row mirror-panel-linked">
-          <div className="member-avatar">{link.teacher?.name?.charAt(0).toUpperCase() || '?'}</div>
+          <div className="member-avatar" style={identityStyle(link.teacher?._id || link.teacher?.name)}>{link.teacher?.name?.charAt(0).toUpperCase() || '?'}</div>
           <div className="member-info">
             <div className="member-name">{link.teacher?.name}</div>
             <div className="member-sub">Linked — new uploads from them appear here automatically</div>

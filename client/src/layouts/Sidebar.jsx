@@ -3,6 +3,7 @@ import { NavLink, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import ThemeToggle from '../components/ThemeToggle';
 import api from '../api/axios';
+import { identityStyle } from '../utils/identityColor';
 import {
   Folder,
   BookOpen,
@@ -15,6 +16,13 @@ import {
   X,
   Share2,
   Megaphone,
+  LayoutDashboard,
+  ShieldCheck,
+  BadgeCheck,
+  BookMarked,
+  Briefcase,
+  Compass,
+  ChevronDown,
 } from 'lucide-react';
 import './Sidebar.css';
 
@@ -24,6 +32,7 @@ const Sidebar = ({ role }) => {
   const [mobileOpen, setMobileOpen] = useState(false);
   const [pendingMirrorCount, setPendingMirrorCount] = useState(0);
   const [unreadNotifications, setUnreadNotifications] = useState(0);
+  const [pendingVerifications, setPendingVerifications] = useState(0);
   const menuBtnRef = useRef(null);
   const closeBtnRef = useRef(null);
   const drawerRef = useRef(null);
@@ -35,9 +44,17 @@ const Sidebar = ({ role }) => {
     let cancelled = false;
     const loadBadges = async () => {
       try {
+        if (role === 'admin') {
+          const { data } = await api.get('/admin/dashboard');
+          if (!cancelled) {
+            setPendingVerifications((data.pendingUserVerifications || 0) + (data.pendingSectionVerifications || 0));
+          }
+          return;
+        }
+
         const { data: notifications } = await api.get('/notifications');
         if (!cancelled) setUnreadNotifications(notifications.filter(n => !n.read).length);
-        
+
         if (role === 'teacher') {
           const { data } = await api.get('/teacher-materials/mirror-requests');
           if (!cancelled) setPendingMirrorCount(data.length);
@@ -107,7 +124,20 @@ const Sidebar = ({ role }) => {
     return () => window.removeEventListener('keydown', onKeyDown);
   }, [mobileOpen]);
 
+  // The Central Segment is a nav group: clicking it reveals Book Sharing and
+  // Job Query underneath. Students/teachers get the public pages; admins get
+  // their management pages.
+  const centralGroup = (children) => ({
+    group: 'Central Segment',
+    icon: <Compass size={19} />,
+    children,
+  });
+
   const studentLinks = [
+    centralGroup([
+      { to: '/student/books', icon: <BookMarked size={17} />, label: 'Book Sharing' },
+      { to: '/student/jobs', icon: <Briefcase size={17} />, label: 'Job Query' },
+    ]),
     { to: '/student/personal', icon: <Folder size={19} />, label: 'Personal Storage' },
     { to: '/student/materials', icon: <BookOpen size={19} />, label: 'Class Material' },
     { to: '/student/notices', icon: <Megaphone size={19} />, label: 'Notices' },
@@ -117,6 +147,10 @@ const Sidebar = ({ role }) => {
   ];
 
   const teacherLinks = [
+    centralGroup([
+      { to: '/teacher/books', icon: <BookMarked size={17} />, label: 'Book Sharing' },
+      { to: '/teacher/jobs', icon: <Briefcase size={17} />, label: 'Job Query' },
+    ]),
     { to: '/teacher/personal', icon: <Folder size={19} />, label: 'Personal Storage' },
     { to: '/teacher/share-material', icon: <Share2 size={19} />, label: 'Share Material', badge: pendingMirrorCount },
     { to: '/teacher/notices', icon: <Megaphone size={19} />, label: 'Notices' },
@@ -125,7 +159,30 @@ const Sidebar = ({ role }) => {
     { to: '/teacher/profile', icon: <UserCircle size={19} />, label: 'Profile' },
   ];
 
-  const links = role === 'student' ? studentLinks : teacherLinks;
+  const adminLinks = [
+    centralGroup([
+      { to: '/admin/books', icon: <BookMarked size={17} />, label: 'Book Sharing' },
+      { to: '/admin/jobs', icon: <Briefcase size={17} />, label: 'Job Query' },
+    ]),
+    { to: '/admin/dashboard', icon: <LayoutDashboard size={19} />, label: 'Dashboard' },
+    { to: '/admin/verifications', icon: <BadgeCheck size={19} />, label: 'Student & Teacher IDs', badge: pendingVerifications },
+    { to: '/admin/sections', icon: <ShieldCheck size={19} />, label: 'Sections' },
+    { to: '/admin/users', icon: <Users size={19} />, label: 'Users' },
+    { to: '/admin/profile', icon: <UserCircle size={19} />, label: 'Profile' },
+  ];
+
+  const links = role === 'admin' ? adminLinks : role === 'student' ? studentLinks : teacherLinks;
+
+  // Open the group automatically when the user is already on one of its pages.
+  const centralPaths = [
+    '/books', '/jobs', '/central',
+    '/student/books', '/student/jobs', '/student/central',
+    '/teacher/books', '/teacher/jobs', '/teacher/central',
+    '/admin/books', '/admin/jobs',
+  ];
+  const onCentralPage = centralPaths.some((p) => location.pathname.startsWith(p));
+  const [centralOpen, setCentralOpen] = useState(onCentralPage);
+  useEffect(() => { if (onCentralPage) setCentralOpen(true); }, [onCentralPage]);
 
   const sidebarContent = (
     <>
@@ -145,7 +202,7 @@ const Sidebar = ({ role }) => {
       </div>
 
       <div className="sidebar-user">
-        <div className="avatar">
+        <div className="avatar" style={identityStyle(user?._id || user?.name)}>
           <span className="avatar-placeholder">{user?.name?.charAt(0).toUpperCase() || '?'}</span>
         </div>
         <div className="user-info">
@@ -155,17 +212,46 @@ const Sidebar = ({ role }) => {
       </div>
 
       <nav className="sidebar-nav" aria-label="Main navigation">
-        {links.map((link) => (
-          <NavLink
-            key={link.to}
-            to={link.to}
-            className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
-          >
-            {link.icon}
-            <span>{link.label}</span>
-            {!!link.badge && <span className="nav-badge">{link.badge}</span>}
-          </NavLink>
-        ))}
+        {links.map((link) =>
+          link.group ? (
+            <div key={link.group} className={`nav-group${centralOpen ? ' open' : ''}`}>
+              <button
+                type="button"
+                className={`nav-link nav-group-toggle${onCentralPage ? ' active' : ''}`}
+                onClick={() => setCentralOpen((o) => !o)}
+                aria-expanded={centralOpen}
+              >
+                {link.icon}
+                <span>{link.group}</span>
+                <ChevronDown size={15} className="nav-group-chevron" />
+              </button>
+              <div className="nav-group-items">
+                <div className="nav-group-items-inner">
+                  {link.children.map((child) => (
+                    <NavLink
+                      key={child.to}
+                      to={child.to}
+                      className={({ isActive }) => `nav-link nav-sublink ${isActive ? 'active' : ''}`}
+                    >
+                      {child.icon}
+                      <span>{child.label}</span>
+                    </NavLink>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ) : (
+            <NavLink
+              key={link.to}
+              to={link.to}
+              className={({ isActive }) => `nav-link ${isActive ? 'active' : ''}`}
+            >
+              {link.icon}
+              <span>{link.label}</span>
+              {!!link.badge && <span className="nav-badge">{link.badge}</span>}
+            </NavLink>
+          )
+        )}
       </nav>
 
       <div className="sidebar-footer">

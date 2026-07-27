@@ -1,7 +1,9 @@
+const { v4: uuidv4 } = require('uuid');
 const Section = require('../models/Section');
 const SectionMembership = require('../models/SectionMembership');
 const User = require('../models/User');
 const Notification = require('../models/Notification');
+const { generatePresignedUploadUrl } = require('../services/r2Service');
 
 // POST /sections — Create a new section
 const createSection = async (req, res) => {
@@ -35,7 +37,15 @@ const createSection = async (req, res) => {
       return res.status(409).json({ message: 'A section with this uniqueId already exists' });
     }
 
-    const section = await Section.create({ name, uniqueId: formattedId, contactPhone });
+    // New sections are unverified (100 MB) and on a 7-day deletion clock until
+    // the CR submits section verification. Submitting clears deletionDueAt.
+    const GRACE_MS = 7 * 24 * 60 * 60 * 1000;
+    const section = await Section.create({
+      name,
+      uniqueId: formattedId,
+      contactPhone,
+      deletionDueAt: new Date(Date.now() + GRACE_MS),
+    });
 
     // Creator becomes active admin immediately
     await SectionMembership.create({
@@ -456,6 +466,53 @@ const decideInvitation = async (req, res) => {
   }
 };
 
+// ─── Section verification (CR submits their student ID card) ────────────────
+
+// POST /sections/:id/verification/presign (admin/CR only)
+const presignSectionVerification = async (req, res) => {
+  try {
+    const { mimeType } = req.body;
+    if (!mimeType) return res.status(400).json({ message: 'mimeType is required' });
+    const ext = (mimeType.split('/')[1] || 'jpg').split('+')[0];
+    const fileKey = `verifications/sections/${req.params.id}/idcard-${uuidv4()}.${ext}`;
+    const presignedUrl = await generatePresignedUploadUrl(fileKey, mimeType);
+    return res.json({ fileKey, presignedUrl });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// POST /sections/:id/verification (admin/CR only) — submit for review
+const submitSectionVerification = async (req, res) => {
+  try {
+    const { idCardKey } = req.body;
+    if (!idCardKey) return res.status(400).json({ message: 'An ID card image is required' });
+
+    const section = await Section.findById(req.params.id);
+    if (!section) return res.status(404).json({ message: 'Section not found' });
+    if (section.verification?.status === 'verified') {
+      return res.status(400).json({ message: 'This section is already verified' });
+    }
+
+    section.verification = {
+      status: 'pending',
+      idCardKey,
+      submittedBy: req.user._id,
+      submittedAt: new Date(),
+      reviewedAt: null,
+      reviewedBy: null,
+      rejectionReason: null,
+    };
+    section.deletionDueAt = null; // submitting takes the section off the clock
+    await section.save();
+    return res.json(section);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
 module.exports = {
   createSection,
   lookupSection,
@@ -470,4 +527,6 @@ module.exports = {
   inviteMember,
   updateSection,
   decideInvitation,
+  presignSectionVerification,
+  submitSectionVerification,
 };

@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Users } from 'lucide-react';
 import api from '../api/axios';
+import { identityColor } from '../utils/identityColor';
 
 /**
  * Dropdown of the current user's active sections.
@@ -46,15 +47,26 @@ const SectionSelect = ({ value, onChange, roleFilter, autoSelectFirst = true, la
 
   return (
     <div className="form-group section-select">
-      <label>{label}</label>
-      <select
-        value={value?._id || ''}
-        onChange={(e) => onChange(sections.find((s) => s._id === e.target.value) || null)}
-      >
-        {sections.map((s) => (
-          <option key={s._id} value={s._id}>{s.name}</option>
-        ))}
-      </select>
+      <label htmlFor="section-select-input">{label}</label>
+      <div className="section-select-control">
+        {value && (
+          <span
+            className="section-select-swatch"
+            style={{ background: identityColor(value._id).bg }}
+            aria-hidden="true"
+          />
+        )}
+        <select
+          id="section-select-input"
+          className={value ? 'has-swatch' : ''}
+          value={value?._id || ''}
+          onChange={(e) => onChange(sections.find((s) => s._id === e.target.value) || null)}
+        >
+          {sections.map((s) => (
+            <option key={s._id} value={s._id}>{s.name}</option>
+          ))}
+        </select>
+      </div>
     </div>
   );
 };

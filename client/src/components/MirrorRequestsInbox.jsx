@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import api from '../api/axios';
 import { Check, X, FolderOpen } from 'lucide-react';
+import { identityStyle } from '../utils/identityColor';
 import '../styles/Panels.css';
 
 /**
@@ -111,7 +112,7 @@ const MirrorRequestsInbox = ({ onCountChange }) => {
           {requests.map((r) => (
             <div key={r._id} className="card" style={{ padding: '1rem 1.1rem' }}>
               <div className="request-row" style={{ border: 'none', padding: 0, background: 'transparent' }}>
-                <div className="member-avatar">{r.section?.name?.charAt(0).toUpperCase() || '?'}</div>
+                <div className="member-avatar" style={identityStyle(r.section?._id || r.section?.name)}>{r.section?.name?.charAt(0).toUpperCase() || '?'}</div>
                 <div className="member-info">
                   <div className="member-name">{r.section?.name}</div>
                   <div className="member-sub">

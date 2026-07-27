@@ -7,6 +7,7 @@ const SectionMembership = require('../models/SectionMembership');
 const MirrorLink = require('../models/MirrorLink');
 const Notification = require('../models/Notification');
 const { generatePresignedUploadUrl, generatePresignedDownloadUrl, deleteObject } = require('../services/r2Service');
+const { getSectionLimit } = require('../services/quotaService');
 
 // Helper: verify course belongs to section
 const verifyCourseInSection = async (courseId, sectionId) => {
@@ -216,9 +217,17 @@ const presignMaterialUpload = async (req, res) => {
       return res.status(400).json({ message: 'fileName, fileSize, mimeType are required' });
     }
 
-    const MAX_STORAGE = 500 * 1024 * 1024;
+    const MAX_STORAGE = getSectionLimit(section);
     if ((section.storageUsed || 0) + fileSize > MAX_STORAGE) {
-      return res.status(403).json({ message: 'Storage limit of 500MB reached for this section' });
+      const limitLabel = MAX_STORAGE >= 1024 * 1024 * 1024
+        ? `${(MAX_STORAGE / (1024 * 1024 * 1024)).toFixed(0)} GB`
+        : `${(MAX_STORAGE / (1024 * 1024)).toFixed(0)} MB`;
+      return res.status(403).json({
+        message: section.verification?.status === 'verified'
+          ? `Storage limit of ${limitLabel} reached for this section`
+          : `This section has only ${limitLabel} until it is verified. Ask the CR to submit section verification to unlock 3 GB.`,
+        code: 'QUOTA_EXCEEDED',
+      });
     }
 
     const fileId = uuidv4();

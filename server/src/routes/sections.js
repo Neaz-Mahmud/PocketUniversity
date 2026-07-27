@@ -16,6 +16,8 @@ const {
   inviteMember,
   updateSection,
   decideInvitation,
+  presignSectionVerification,
+  submitSectionVerification,
 } = require('../controllers/sectionController');
 
 const router = express.Router();
@@ -50,5 +52,9 @@ router.delete('/:id/members/:userId', removeMember);
 // Invite
 router.post('/:id/invite', requireAdmin, inviteMember);
 router.patch('/:id/invitations/decide', decideInvitation);
+
+// Section verification (CR uploads their student ID card)
+router.post('/:id/verification/presign', requireAdmin, presignSectionVerification);
+router.post('/:id/verification', requireAdmin, submitSectionVerification);
 
 module.exports = router;

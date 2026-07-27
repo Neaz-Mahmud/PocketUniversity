@@ -275,6 +275,24 @@
   flex-wrap: wrap;
 }
 
+/* Identity block on a Section's own page: a large colour-coded avatar
+   beside the name, so opening "CSE 8B" feels like walking into your class's
+   own space rather than a generic settings screen. */
+.section-admin-identity {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-4);
+  min-width: 0;
+}
+
+.section-admin-avatar {
+  width: 52px;
+  height: 52px;
+  font-size: var(--text-xl);
+  font-family: var(--font-display);
+  box-shadow: var(--shadow-soft);
+}
+
 /* The join code doubles as a copy-to-clipboard button */
 .section-admin-code {
   display: inline-flex;

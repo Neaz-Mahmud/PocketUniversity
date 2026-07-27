@@ -30,12 +30,17 @@ const register = async (req, res) => {
       return res.status(409).json({ message: 'Email already registered' });
     }
 
+    // New student/teacher accounts start unverified and on a 7-day deletion
+    // clock: if no verification request is submitted in time, the cleanup job
+    // removes the account. Submitting a request clears deletionDueAt.
+    const GRACE_MS = 7 * 24 * 60 * 60 * 1000;
     const user = await User.create({
       name,
       email: email.toLowerCase(),
       phone,
       passwordHash: password, // pre-save hook hashes it
       role,
+      deletionDueAt: new Date(Date.now() + GRACE_MS),
     });
 
     const accessToken = generateAccessToken(user._id);

@@ -15,6 +15,7 @@ import {
   Users,
 } from 'lucide-react';
 import RequestAdminForm from '../../components/RequestAdminForm';
+import { identityStyle } from '../../utils/identityColor';
 import '../../styles/Panels.css';
 import './MySections.css';
 
@@ -222,7 +223,7 @@ const MySections = () => {
               return (
                 <div key={s._id} className="section-card is-invited">
                   <div className="section-card-header section-card-header-static">
-                    <div className="member-avatar">{s.name.charAt(0).toUpperCase()}</div>
+                    <div className="member-avatar" style={identityStyle(s._id)}>{s.name.charAt(0).toUpperCase()}</div>
                     <div className="member-info">
                       <div className="member-name">{s.name}</div>
                       <div className="member-sub">Invitation to join as {s.memberRole}</div>
@@ -244,7 +245,7 @@ const MySections = () => {
             return isAdmin ? (
               <Link key={s._id} to={`${basePath}/${s._id}`} state={{ section: s }} className="section-card section-card-link">
                 <div className="section-card-header">
-                  <div className="member-avatar">{s.name.charAt(0).toUpperCase()}</div>
+                  <div className="member-avatar" style={identityStyle(s._id)}>{s.name.charAt(0).toUpperCase()}</div>
                   <div className="member-info">
                     <div className="member-name">{s.name}</div>
                     <div className="member-sub">{s.uniqueId}</div>
@@ -269,7 +270,7 @@ const MySections = () => {
             ) : (
               <div key={s._id} className="section-card">
                 <div className="section-card-header section-card-header-static">
-                  <div className="member-avatar">{s.name.charAt(0).toUpperCase()}</div>
+                  <div className="member-avatar" style={identityStyle(s._id)}>{s.name.charAt(0).toUpperCase()}</div>
                   <div className="member-info">
                     <div className="member-name">{s.name}</div>
                     <div className="member-sub">{s.uniqueId}</div>

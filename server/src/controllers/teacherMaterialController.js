@@ -4,6 +4,7 @@ const TeacherMaterialFile = require('../models/TeacherMaterialFile');
 const MirrorLink = require('../models/MirrorLink');
 const { generatePresignedUploadUrl, generatePresignedDownloadUrl, deleteObject } = require('../services/r2Service');
 const { propagateFileToLinks, removeMirroredCopies, propagateFileRenameToLinks } = require('../services/mirrorService');
+const { checkQuota } = require('../services/quotaService');
 
 // ─── Folders ─────────────────────────────────────────────────────────────────
 
@@ -178,6 +179,10 @@ const presignUpload = async (req, res) => {
     const folder = await TeacherMaterialFolder.findOne({ _id: folderId, owner: req.user._id, type: 'course' });
     if (!folder) return res.status(404).json({ message: 'Course folder not found' });
 
+    // Teacher quota is COMBINED across personal storage + shared materials, so
+    // this enforces the same 50 MB / 2 GB allowance as personal uploads.
+    await checkQuota(req.user, fileSize);
+
     const fileId = uuidv4();
     const fileKey = `teacher-materials/${req.user._id}/${folderId}/${fileId}-${fileName}`;
 
@@ -195,6 +200,9 @@ const presignUpload = async (req, res) => {
 
     return res.status(201).json({ fileId: file._id, fileKey, presignedUrl });
   } catch (err) {
+    if (err.code === 'QUOTA_EXCEEDED' || err.status === 413) {
+      return res.status(413).json({ message: err.message, code: 'QUOTA_EXCEEDED' });
+    }
     console.error(err);
     return res.status(500).json({ message: 'Server error' });
   }

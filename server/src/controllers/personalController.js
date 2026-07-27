@@ -168,7 +168,7 @@ const presignUpload = async (req, res) => {
     if (!folder) return res.status(404).json({ message: 'Course folder not found' });
 
     // Check quota before issuing presigned URL
-    await checkQuota(req.user._id, fileSize, req.user.role);
+    await checkQuota(req.user, fileSize);
 
     // Create pending file record
     const fileId = uuidv4();
@@ -258,7 +258,7 @@ const renameFile = async (req, res) => {
 // GET /personal/quota
 const getQuota = async (req, res) => {
   try {
-    const info = await getQuotaInfo(req.user._id, req.user.role);
+    const info = await getQuotaInfo(req.user);
     return res.json(info);
   } catch (err) {
     console.error(err);

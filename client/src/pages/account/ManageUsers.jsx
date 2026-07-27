@@ -1,5 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Users } from 'lucide-react';
 import api from '../../api/axios';
+import { identityStyle } from '../../utils/identityColor';
 import '../../styles/Panels.css';
 
 const ROLE_BADGE = { admin: 'badge-ink', teacher: 'badge-sky', student: 'badge-mint' };
@@ -114,7 +116,7 @@ const ManageUsers = ({ sectionId }) => {
           <div className="row-list request-list">
             {requests.map((r) => (
               <div key={r._id} className="request-row">
-                <div className="member-avatar">{r.user?.name?.charAt(0).toUpperCase() || '?'}</div>
+                <div className="member-avatar" style={identityStyle(r.user?._id || r.user?.name)}>{r.user?.name?.charAt(0).toUpperCase() || '?'}</div>
                 <div className="member-info">
                   <div className="member-name">{r.user?.name}</div>
                   <div className="member-sub">{r.user?.email} · wants to join as <b>{r.role}</b></div>
@@ -138,19 +140,25 @@ const ManageUsers = ({ sectionId }) => {
       </div>
 
       {loading ? (
-        <div className="loading-row"><span className="spinner" /> Loading…</div>
+        <div className="skeleton-list">
+          {Array.from({ length: 4 }).map((_, i) => <div key={i} className="skeleton skeleton-row" />)}
+        </div>
       ) : members.length === 0 ? (
-        <div className="empty-state">No members found</div>
+        <div className="empty-state">
+          <span className="empty-state-icon"><Users size={22} /></span>
+          <span className="empty-state-title">No members here yet</span>
+          <span className="empty-state-hint">Invite students and teachers using the field above, or share your Section's join code.</span>
+        </div>
       ) : (
         <div className="row-list">
           {members.map((m) => (
             <div key={m._id} className="member-row">
-              <div className="member-avatar">{m.user?.name?.charAt(0).toUpperCase() || '?'}</div>
+              <div className="member-avatar" style={identityStyle(m.user?._id || m.user?.name)}>{m.user?.name?.charAt(0).toUpperCase() || '?'}</div>
               <div className="member-info">
                 <div className="member-name">{m.user?.name}</div>
                 <div className="member-sub">{m.user?.email}</div>
               </div>
-              <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+              <div className="member-role-badges">
                 <span className={`badge ${ROLE_BADGE[m.role]}`}>{m.role}</span>
                 {m.status === 'invited' && <span className="badge badge-muted">Invited</span>}
               </div>

@@ -15,6 +15,11 @@ const sectionRoutes = require('./routes/sections');
 const sectionContentRoutes = require('./routes/sectionContent');
 const { sectionNoticeRouter, teacherNoticeRouter } = require('./routes/notices');
 const notificationRoutes = require('./routes/notifications');
+const adminRoutes = require('./routes/admin');
+const bookRoutes = require('./routes/books');
+const jobRoutes = require('./routes/jobs');
+const metaRoutes = require('./routes/meta');
+const { startCleanupJob } = require('./jobs/cleanupJob');
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -67,6 +72,10 @@ app.use('/sections/:id', sectionContentRoutes);
 app.use('/sections/:id/notices', sectionNoticeRouter);
 app.use('/notices', teacherNoticeRouter);
 app.use('/notifications', notificationRoutes);
+app.use('/admin', adminRoutes);
+app.use('/books', bookRoutes);
+app.use('/jobs', jobRoutes);
+app.use('/meta', metaRoutes);
 
 // Health check
 app.get('/health', (req, res) => {
@@ -82,4 +91,6 @@ app.use((err, req, res, next) => {
 // Start Server
 app.listen(PORT, () => {
   console.log(`🚀 Server running on port ${PORT} in ${process.env.NODE_ENV} mode`);
+  // Kick off the unverified-account/section cleanup scheduler.
+  startCleanupJob();
 });

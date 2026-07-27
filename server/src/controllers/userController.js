@@ -7,7 +7,7 @@ const { v4: uuidv4 } = require('uuid');
 const getMe = async (req, res) => {
   try {
     const user = await User.findById(req.user._id);
-    const quota = await getQuotaInfo(req.user._id, req.user.role);
+    const quota = await getQuotaInfo(user);
     return res.json({ user, quota });
   } catch (err) {
     console.error(err);
@@ -15,17 +15,24 @@ const getMe = async (req, res) => {
   }
 };
 
-// PATCH /users/me
+// PATCH /users/me — name is always editable; academic fields editable until the
+// account is verified (after which they're locked to what the admin approved).
 const updateMe = async (req, res) => {
   try {
-    const { name } = req.body;
-    if (!name) return res.status(400).json({ message: 'Name is required' });
+    const { name, university, sectionName, batch, studentId } = req.body;
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
 
-    const user = await User.findByIdAndUpdate(
-      req.user._id,
-      { name },
-      { new: true, runValidators: true }
-    );
+    if (typeof name === 'string' && name.trim()) user.name = name.trim();
+
+    if (user.verification?.status !== 'verified') {
+      if (university !== undefined) user.university = university;
+      if (sectionName !== undefined) user.sectionName = sectionName;
+      if (batch !== undefined) user.batch = batch;
+      if (studentId !== undefined) user.studentId = studentId;
+    }
+
+    await user.save();
     return res.json(user);
   } catch (err) {
     console.error(err);
@@ -39,7 +46,6 @@ const presignAvatarUpload = async (req, res) => {
     const { mimeType } = req.body;
     if (!mimeType) return res.status(400).json({ message: 'mimeType is required' });
 
-    // Use a fixed key prefix for avatars to overwrite previous ones or just use uuid
     const ext = mimeType.split('/')[1] || 'jpg';
     const fileKey = `avatars/${req.user._id}/${uuidv4()}.${ext}`;
 
@@ -69,7 +75,80 @@ const confirmAvatarUpload = async (req, res) => {
   }
 };
 
-// GET /users/search?q= (admin only generally, but protected is fine)
+// ─── Verification ───────────────────────────────────────────────────────────
+
+// POST /users/me/verification/presign  { target: 'idCard'|'nid', mimeType }
+// Returns a presigned PUT URL for the ID document. The key is recorded only when
+// the user submits (below), so an abandoned upload never changes state.
+const presignVerificationDoc = async (req, res) => {
+  try {
+    const { target, mimeType } = req.body;
+    if (!['idCard', 'nid'].includes(target)) {
+      return res.status(400).json({ message: "target must be 'idCard' or 'nid'" });
+    }
+    if (!mimeType) return res.status(400).json({ message: 'mimeType is required' });
+
+    const ext = (mimeType.split('/')[1] || 'jpg').split('+')[0];
+    const fileKey = `verifications/users/${req.user._id}/${target}-${uuidv4()}.${ext}`;
+    const presignedUrl = await generatePresignedUploadUrl(fileKey, mimeType);
+    return res.json({ fileKey, presignedUrl });
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// POST /users/me/verification/submit
+// Students must supply idCard + academic profile (university, section, batch, id).
+// Teachers must supply idCard only. NID is optional for both.
+const submitVerification = async (req, res) => {
+  try {
+    const { idCardKey, nidKey, university, sectionName, batch, studentId } = req.body;
+    const user = await User.findById(req.user._id);
+    if (!user) return res.status(404).json({ message: 'User not found' });
+
+    if (user.role === 'admin') {
+      return res.status(400).json({ message: 'Admins do not require verification' });
+    }
+    if (user.verification?.status === 'verified') {
+      return res.status(400).json({ message: 'Your account is already verified' });
+    }
+    if (!idCardKey) {
+      return res.status(400).json({ message: 'An ID card image is required' });
+    }
+
+    if (user.role === 'student') {
+      const missing = ['university', 'sectionName', 'batch', 'studentId'].filter((f) => !req.body[f]);
+      if (missing.length) {
+        return res.status(400).json({ message: `Missing required student fields: ${missing.join(', ')}` });
+      }
+      user.university = university;
+      user.sectionName = sectionName;
+      user.batch = batch;
+      user.studentId = studentId;
+    }
+
+    user.verification = {
+      status: 'pending',
+      idCardKey,
+      nidKey: nidKey || null,
+      submittedAt: new Date(),
+      reviewedAt: null,
+      reviewedBy: null,
+      rejectionReason: null,
+    };
+    // Submitting a request takes the account off the deletion clock.
+    user.deletionDueAt = null;
+
+    await user.save();
+    return res.json(user);
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ message: 'Server error' });
+  }
+};
+
+// GET /users/search?q= (used by admins/CRs to find people)
 const searchUsers = async (req, res) => {
   try {
     const { q } = req.query;
@@ -87,4 +166,12 @@ const searchUsers = async (req, res) => {
   }
 };
 
-module.exports = { getMe, updateMe, presignAvatarUpload, confirmAvatarUpload, searchUsers };
+module.exports = {
+  getMe,
+  updateMe,
+  presignAvatarUpload,
+  confirmAvatarUpload,
+  presignVerificationDoc,
+  submitVerification,
+  searchUsers,
+};

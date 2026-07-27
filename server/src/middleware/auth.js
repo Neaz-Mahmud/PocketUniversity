@@ -26,4 +26,35 @@ const protect = async (req, res, next) => {
   }
 };
 
-module.exports = { protect };
+/**
+ * Restrict a route to one or more platform roles. Use after `protect`.
+ * e.g. router.get('/admin/x', protect, restrictTo('admin'), handler)
+ */
+const restrictTo = (...roles) => (req, res, next) => {
+  if (!req.user || !roles.includes(req.user.role)) {
+    return res.status(403).json({ message: 'Forbidden: insufficient permissions' });
+  }
+  next();
+};
+
+/**
+ * Optional auth: attach req.user if a valid token is present, but never reject.
+ * Used by publicly-browsable endpoints (book listings, job posts) that still
+ * want to know who the viewer is when they happen to be logged in.
+ */
+const optionalAuth = async (req, res, next) => {
+  try {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      const token = authHeader.split(' ')[1];
+      const decoded = jwt.verify(token, process.env.JWT_ACCESS_SECRET);
+      const user = await User.findById(decoded.id);
+      if (user) req.user = user;
+    }
+  } catch (_) {
+    // Ignore invalid/expired tokens for optional auth — treat as anonymous.
+  }
+  next();
+};
+
+module.exports = { protect, restrictTo, optionalAuth };
